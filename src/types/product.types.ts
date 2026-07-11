@@ -87,3 +87,14 @@ export interface PublicProductDetail {
   imagenes: ProductImage[];
   variantes: ProductVariant[];
 }
+
+export interface ProductImage {
+  id_imagen: string;
+  id_producto?: string;
+  url_imagen: string;
+  es_principal: boolean;
+  orden: number;
+  estado?: string;
+  fecha_creacion?: string;
+  fecha_actualizacion?: string;
+}

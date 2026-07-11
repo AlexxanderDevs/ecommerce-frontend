@@ -5,6 +5,7 @@ import type {
   CreateProductPayload,
   CreateVariantPayload,
   Product,
+  ProductImage,
   ProductVariant,
   PublicProductDetail 
 } from '../types/product.types';
@@ -150,7 +151,7 @@ export async function activateSellerProductVariant(variantId: string) {
 
   return data.variant as ProductVariant;
 }
-
+// Category Management
 export interface UpdateCategoryPayload {
   id_categoria_padre?: string | null;
   nombre: string;
@@ -183,4 +184,29 @@ export async function activateCategory(categoryId: string) {
   );
 
   return data.category as Category;
+}
+
+// Product Images
+export async function getSellerProductImages(productId: string) {
+  const { data } = await http.get(
+    `/catalog/seller/products/${productId}/images`
+  );
+
+  return data.images as ProductImage[];
+}
+
+export async function setMainSellerProductImage(imageId: string) {
+  const { data } = await http.patch(
+    `/catalog/seller/images/${imageId}/main`
+  );
+
+  return data.image as ProductImage;
+}
+
+export async function deactivateSellerProductImage(imageId: string) {
+  const { data } = await http.patch(
+    `/catalog/seller/images/${imageId}/deactivate`
+  );
+
+  return data.image as ProductImage;
 }

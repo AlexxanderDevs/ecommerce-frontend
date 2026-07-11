@@ -47,6 +47,7 @@ import type { UpdateProductPayload } from '../../api/product.api';
 import { ProductVariantsDialog } from '../../components/seller/ProductVariantsDialog';
 import type { UpdateCategoryPayload } from '../../api/product.api';
 import { CategoryEditDialog } from '../../components/seller/CategoryEditDialog';
+import { ProductImagesDialog } from '../../components/seller/ProductImagesDialog';
 
 export function SellerProductsPage() {
   const [stores, setStores] = useState<StoreType[]>([]);
@@ -70,6 +71,7 @@ export function SellerProductsPage() {
   const [categoryDescription, setCategoryDescription] = useState('');
 
   const [productImage, setProductImage] = useState<File | null>(null);
+  const [imageManagerProduct, setImageManagerProduct] = useState<Product | null>(null);
   const [productCategory, setProductCategory] = useState('');
   const [productCode, setProductCode] = useState('');
   const [productName, setProductName] = useState('');
@@ -501,6 +503,14 @@ export function SellerProductsPage() {
   function handleProductImageChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0] ?? null;
     setProductImage(file);
+  }
+
+  function openImageManager(product: Product) {
+    setImageManagerProduct(product);
+  }
+
+  function closeImageManager() {
+    setImageManagerProduct(null);
   }
 
   const productsWithVariants = products.filter(
@@ -1103,6 +1113,7 @@ export function SellerProductsPage() {
                         onDeactivate={() => openDeactivateProductDialog(product)}
                         onActivate={() => openActivateProductDialog(product)}
                         onAddImage={(file) => handleAddExtraImage(product.id_producto, file)}
+                        onManageImages={() => openImageManager(product)}
                         onManageVariants={() => openVariantManager(product)}
                       />
                     ))}
@@ -1157,6 +1168,12 @@ export function SellerProductsPage() {
         open={!!variantManagerProduct}
         product={variantManagerProduct}
         onClose={closeVariantManager}
+        onChanged={() => selectedStoreId && loadCatalogData(selectedStoreId)}
+      />
+      <ProductImagesDialog
+        open={!!imageManagerProduct}
+        product={imageManagerProduct}
+        onClose={closeImageManager}
         onChanged={() => selectedStoreId && loadCatalogData(selectedStoreId)}
       />
       <ProductEditDialog
@@ -1219,11 +1236,10 @@ function CategoryCard({
 
   return (
     <article
-      className={`rounded-2xl border p-4 ${
-        isInactive
-          ? 'border-red-200 bg-red-50/40 opacity-80'
-          : 'border-slate-200 bg-white'
-      }`}
+      className={`rounded-2xl border p-4 ${isInactive
+        ? 'border-red-200 bg-red-50/40 opacity-80'
+        : 'border-slate-200 bg-white'
+        }`}
     >
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
@@ -1231,11 +1247,10 @@ function CategoryCard({
             <h3 className="font-bold">{category.nombre}</h3>
 
             <span
-              className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                isInactive
-                  ? 'bg-red-100 text-red-700'
-                  : 'bg-green-50 text-green-700'
-              }`}
+              className={`rounded-full px-2 py-0.5 text-xs font-medium ${isInactive
+                ? 'bg-red-100 text-red-700'
+                : 'bg-green-50 text-green-700'
+                }`}
             >
               {category.estado}
             </span>
@@ -1306,6 +1321,7 @@ interface ProductCardProps {
   onActivate: () => void;
   onAddImage: (file: File | null) => void;
   onManageVariants: () => void;
+  onManageImages: () => void;
 }
 function ProductCard({
   product,
@@ -1314,6 +1330,7 @@ function ProductCard({
   onDeactivate,
   onActivate,
   onAddImage,
+  onManageImages,
   onManageVariants
 }: ProductCardProps) {
   const isInactive =
@@ -1390,6 +1407,15 @@ function ProductCard({
         >
           <Pencil className="h-4 w-4" />
           Editar
+        </button>
+        <button
+          type="button"
+          onClick={onManageImages}
+          disabled={loading}
+          className="inline-flex items-center gap-2 rounded-xl border border-purple-200 px-4 py-2 text-sm font-medium text-purple-600 hover:bg-purple-50 disabled:opacity-60"
+        >
+          <ImagePlus className="h-4 w-4" />
+          Ver imágenes
         </button>
         {product.requiere_variantes && (
           <button
