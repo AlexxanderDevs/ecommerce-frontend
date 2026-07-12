@@ -210,3 +210,8 @@ export async function deactivateSellerProductImage(imageId: string) {
 
   return data.image as ProductImage;
 }
+
+export async function getPublicCategoriesByStoreSlug(slug: string) {
+  const { data } = await http.get(`/catalog/public/stores/${slug}/categories`);
+  return data.categories as Category[];
+}
