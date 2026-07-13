@@ -17,6 +17,7 @@ import type { Store as StoreType } from '../../types/store.types';
 import { assetUrl } from '../../utils/assets';
 import { toast } from 'sonner';
 import { getErrorMessage } from '../../utils/getErrorMessage';
+import { CopyStoreLinkButton } from '../../components/seller/CopyStoreLinkButton';
 
 type StoreStatus = NonNullable<StoreType['estado']>;
 
@@ -56,8 +57,8 @@ export function SellerDashboardPage() {
             setLoadingStores(true);
             const data = await getMyStores();
             setStores(data);
-        } catch (error){
-            const message = getErrorMessage(error,'No se pudieron cargar tus tiendas.' );
+        } catch (error) {
+            const message = getErrorMessage(error, 'No se pudieron cargar tus tiendas.');
             toast.error(message);
         } finally {
             setLoadingStores(false);
@@ -307,8 +308,11 @@ export function SellerDashboardPage() {
                                 <StoreCard key={store.id_tienda} store={store} />
                             ))}
                         </div>
+
+
                     )}
                 </div>
+
             </div>
         </section>
     );
@@ -416,9 +420,28 @@ function StoreCard({ store }: StoreCardProps) {
                 )}
 
                 {store.estado === 'ACTIVA' && (
-                    <div className="mt-4 rounded-xl bg-green-50 p-3 text-sm text-green-700">
-                        Tu tienda está activa. Ya puedes crear productos para vender.
-                    </div>
+                    <>
+                        <div className="mt-4 rounded-xl bg-green-50 p-3 text-sm text-green-700">
+                            Tu tienda está activa. Ya puedes crear productos para vender.
+                        </div>
+
+                        <div className="mt-4 flex flex-wrap gap-3">
+                            <CopyStoreLinkButton slug={store.slug} />
+
+                            <a
+                                href={`/stores/${store.slug}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+                            >
+                                Ver tienda
+                            </a>
+                        </div>
+
+                        <p className="mt-3 break-all text-xs text-slate-500">
+                            Enlace público: {window.location.origin}/stores/{store.slug}
+                        </p>
+                    </>
                 )}
 
                 {store.estado === 'RECHAZADA' && (

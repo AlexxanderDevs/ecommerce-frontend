@@ -29,13 +29,7 @@ export function Navbar() {
             Inicio
           </NavLink>
 
-          <NavLink
-            to="/stores"
-            className="text-sm font-medium text-slate-600 hover:text-slate-900"
-          >
-            Tiendas
-          </NavLink>
-
+         
           {hasRole('VENDEDOR') && (
             <>
               <NavLink
@@ -57,6 +51,8 @@ export function Navbar() {
               >
                 Pedidos
               </NavLink>
+      
+
             </>
           )}
 
@@ -66,7 +62,12 @@ export function Navbar() {
               className="text-sm font-medium text-slate-600 hover:text-slate-900"
             >
               Admin
+        
+
             </NavLink>
+        
+            
+            
           )}
         </div>
 

@@ -19,12 +19,7 @@ export function HomePage() {
         </p>
 
         <div className="mt-8 flex flex-wrap gap-3">
-          <Link
-            to="/stores"
-            className="rounded-xl bg-slate-900 px-5 py-3 font-medium text-white hover:bg-slate-800"
-          >
-            Ver tiendas
-          </Link>
+          
 
           <Link
             to="/register"
