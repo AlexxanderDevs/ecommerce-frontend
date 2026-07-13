@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import {
   CheckCircle2,
+  Clock3,
   Eye,
   Loader2,
+  MessageCircle,
   PackageCheck,
   RefreshCcw,
   Send,
@@ -29,6 +31,19 @@ const statusStyles: Record<SellerOrder['estado'], string> = {
   CANCELADO: 'bg-red-50 text-red-700 border-red-200',
   ENTREGADO: 'bg-green-50 text-green-700 border-green-200'
 };
+type OrderStatusFilter = 'TODOS' | SellerOrder['estado'];
+
+const orderStatusFilters: Array<{
+  value: OrderStatusFilter;
+  label: string;
+}> = [
+    { value: 'TODOS', label: 'Todos' },
+    { value: 'PENDIENTE', label: 'Pendientes' },
+    { value: 'CONFIRMADO', label: 'Confirmados' },
+    { value: 'CANCELADO', label: 'Cancelados' },
+    { value: 'ENTREGADO', label: 'Entregados' }
+  ];
+
 
 export function SellerOrdersPage() {
   const [stores, setStores] = useState<StoreType[]>([]);
@@ -42,6 +57,9 @@ export function SellerOrdersPage() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [observacion, setObservacion] = useState('');
+  const [selectedStatus, setSelectedStatus] =
+    useState<OrderStatusFilter>('TODOS');
+  const [orderSearch, setOrderSearch] = useState('');
 
   useEffect(() => {
     loadStores();
@@ -82,8 +100,8 @@ export function SellerOrdersPage() {
 
       const data = await getSellerOrdersByStore(storeId);
       setOrders(data);
-    } catch (error){
-      const message = getErrorMessage(error,'No se pudieron cargar los pedidos.' );
+    } catch (error) {
+      const message = getErrorMessage(error, 'No se pudieron cargar los pedidos.');
       toast.error(message);
     } finally {
       setLoadingOrders(false);
@@ -99,8 +117,8 @@ export function SellerOrdersPage() {
       const detail = await getSellerOrderDetail(orderId);
       setSelectedOrder(detail);
       setObservacion('');
-    } catch (error){
-      const message = getErrorMessage(error,'No se pudo cargar el detalle del pedido.' );
+    } catch (error) {
+      const message = getErrorMessage(error, 'No se pudo cargar el detalle del pedido.');
       toast.error(message);
     } finally {
       setActionLoading('');
@@ -119,7 +137,7 @@ export function SellerOrdersPage() {
       );
 
       setSelectedOrder(detail);
-      setMessage('Pedido confirmado correctamente. Se descontó el stock y se generó la factura.');
+      setMessage('Pedido confirmado correctamente. Se generó la factura.');
       toast.success('Pedido confirmado correctamente.');
       setObservacion('');
 
@@ -127,7 +145,7 @@ export function SellerOrdersPage() {
         await loadOrders(selectedStoreId);
       }
     } catch (error) {
-      const message = getErrorMessage (error, 'No se pudo confirmar el pedido. Revisa el stock disponible.');
+      const message = getErrorMessage(error, 'No se pudo confirmar el pedido. Revisa el stock disponible.');
       toast.error(message);
     } finally {
       setActionLoading('');
@@ -153,8 +171,8 @@ export function SellerOrdersPage() {
       if (selectedStoreId) {
         await loadOrders(selectedStoreId);
       }
-    } catch (error){
-      const message = getErrorMessage(error,'No se pudo cancelar el pedido.' );
+    } catch (error) {
+      const message = getErrorMessage(error, 'No se pudo cancelar el pedido.');
       toast.error(message);
     } finally {
       setActionLoading('');
@@ -180,8 +198,8 @@ export function SellerOrdersPage() {
       if (selectedStoreId) {
         await loadOrders(selectedStoreId);
       }
-    } catch (error){
-      const message = getErrorMessage(error,'No se pudo marcar el pedido como entregado.' );
+    } catch (error) {
+      const message = getErrorMessage(error, 'No se pudo marcar el pedido como entregado.');
       toast.error(message);
     } finally {
       setActionLoading('');
@@ -201,13 +219,28 @@ export function SellerOrdersPage() {
 
       setMessage('Factura generada y enviada correctamente al correo del cliente.');
       toast.success('Factura enviada correctamente.');
-    } catch (error){
-      const message = getErrorMessage(error,'No se pudo enviar la factura. Revisa que el pedido tenga correo y que SMTP esté configurado.');
+    } catch (error) {
+      const message = getErrorMessage(error, 'No se pudo enviar la factura. Revisa que el pedido tenga correo y que SMTP esté configurado.');
       toast.error(message);
     } finally {
       setActionLoading('');
     }
   }
+
+  const filteredOrders = orders.filter((order) => {
+    const matchesStatus =
+      selectedStatus === 'TODOS' || order.estado === selectedStatus;
+
+    const searchValue = orderSearch.toLowerCase().trim();
+
+    const matchesSearch =
+      searchValue.length === 0 ||
+      order.cliente_nombre.toLowerCase().includes(searchValue) ||
+      order.cliente_telefono.toLowerCase().includes(searchValue) ||
+      order.id_pedido.toLowerCase().includes(searchValue);
+
+    return matchesStatus && matchesSearch;
+  });
 
   return (
     <section>
@@ -215,7 +248,7 @@ export function SellerOrdersPage() {
         <div>
           <h1 className="text-3xl font-bold">Pedidos recibidos</h1>
           <p className="mt-2 text-slate-600">
-            Revisa pedidos enviados por WhatsApp, confirma ventas, descuenta stock y envía facturas.
+            Revisa pedidos enviados por WhatsApp, confirma ventas, gestiona estados y envía facturas.
           </p>
         </div>
 
@@ -258,8 +291,11 @@ export function SellerOrdersPage() {
             <label className="text-sm font-medium">Seleccionar tienda</label>
             <select
               value={selectedStoreId}
-              onChange={(event) => setSelectedStoreId(event.target.value)}
-              className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-slate-900"
+              onChange={(event) => {
+                setSelectedStoreId(event.target.value);
+                setSelectedStatus('TODOS');
+                setOrderSearch('');
+              }} className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-slate-900"
             >
               {stores.map((store) => (
                 <option key={store.id_tienda} value={store.id_tienda}>
@@ -272,22 +308,59 @@ export function SellerOrdersPage() {
           <div className="grid gap-8 lg:grid-cols-[1fr_460px]">
             <div>
               <h2 className="mb-4 text-xl font-bold">Lista de pedidos</h2>
+              <div className="mb-5 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="flex flex-col gap-4">
+                  <div>
+                    <label className="text-sm font-medium">Buscar pedido</label>
+                    <input
+                      value={orderSearch}
+                      onChange={(event) => setOrderSearch(event.target.value)}
+                      className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-slate-900"
+                      placeholder="Buscar por cliente, teléfono o ID del pedido..."
+                    />
+                  </div>
+
+                  <div>
+                    <p className="text-sm font-medium">Filtrar por estado</p>
+
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {orderStatusFilters.map((filter) => (
+                        <button
+                          key={filter.value}
+                          type="button"
+                          onClick={() => setSelectedStatus(filter.value)}
+                          className={`rounded-full border px-4 py-2 text-sm font-medium transition ${selectedStatus === filter.value
+                              ? 'border-slate-900 bg-slate-900 text-white'
+                              : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+                            }`}
+                        >
+                          {filter.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <p className="text-sm text-slate-500">
+                    Mostrando {filteredOrders.length} de {orders.length} pedidos.
+                  </p>
+                </div>
+              </div>
 
               {loadingOrders ? (
                 <div className="rounded-3xl border border-slate-200 bg-white p-10 text-center text-slate-600">
                   Cargando pedidos...
                 </div>
-              ) : orders.length === 0 ? (
+              ) : filteredOrders.length === 0 ? (
                 <div className="rounded-3xl border border-slate-200 bg-white p-10 text-center">
                   <ShoppingBag className="mx-auto h-12 w-12 text-slate-400" />
-                  <h2 className="mt-4 text-xl font-bold">No hay pedidos todavía</h2>
+                  <h2 className="mt-4 text-xl font-bold">No hay pedidos con estos filtros</h2>
                   <p className="mt-2 text-slate-600">
-                    Cuando un cliente haga un pedido, aparecerá aquí.
+                    Prueba cambiar el estado o buscar otro cliente.
                   </p>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {orders.map((order) => (
+                  {filteredOrders.map((order) => (
                     <OrderCard
                       key={order.id_pedido}
                       order={order}
@@ -341,9 +414,8 @@ function OrderCard({ order, loading, onView }: OrderCardProps) {
             <h3 className="font-bold">{order.cliente_nombre}</h3>
 
             <span
-              className={`rounded-full border px-3 py-1 text-xs font-medium ${
-                statusStyles[order.estado]
-              }`}
+              className={`rounded-full border px-3 py-1 text-xs font-medium ${statusStyles[order.estado]
+                }`}
             >
               {order.estado}
             </span>
@@ -390,6 +462,50 @@ interface OrderDetailPanelProps {
   onSendInvoice: () => void;
 }
 
+function normalizeWhatsAppNumber(numero: string): string {
+  let cleanNumber = numero.replace(/\D/g, '');
+
+  if (cleanNumber.startsWith('0') && cleanNumber.length === 10) {
+    cleanNumber = `593${cleanNumber.slice(1)}`;
+  }
+
+  if (cleanNumber.startsWith('00')) {
+    cleanNumber = cleanNumber.slice(2);
+  }
+
+  return cleanNumber;
+}
+
+function buildClientWhatsAppUrl(order: SellerOrderDetail): string {
+  const pedido = order.pedido;
+
+  const productos = order.detalles
+    .map((item) => {
+      const variante = [
+        item.talla ? `Talla: ${item.talla}` : '',
+        item.color ? `Color: ${item.color}` : ''
+      ]
+        .filter(Boolean)
+        .join(' | ');
+
+      return `- ${item.nombre_producto}${variante ? ` (${variante})` : ''} x${item.cantidad}`;
+    })
+    .join('\n');
+
+  const mensaje = `Hola ${pedido.cliente_nombre}, te escribimos sobre tu pedido en ${pedido.nombre_tienda}.
+
+Estado actual: ${pedido.estado}
+
+Productos:
+${productos}
+
+Total: $${Number(pedido.total).toFixed(2)}`;
+
+  return `https://wa.me/${normalizeWhatsAppNumber(
+    pedido.cliente_telefono
+  )}?text=${encodeURIComponent(mensaje)}`;
+}
+
 function OrderDetailPanel({
   order,
   observacion,
@@ -401,7 +517,7 @@ function OrderDetailPanel({
   onSendInvoice
 }: OrderDetailPanelProps) {
   const pedido = order.pedido;
-
+  const clientWhatsAppUrl = buildClientWhatsAppUrl(order);
   return (
     <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -413,9 +529,8 @@ function OrderDetailPanel({
         </div>
 
         <span
-          className={`rounded-full border px-3 py-1 text-xs font-medium ${
-            statusStyles[pedido.estado]
-          }`}
+          className={`rounded-full border px-3 py-1 text-xs font-medium ${statusStyles[pedido.estado]
+            }`}
         >
           {pedido.estado}
         </span>
@@ -439,6 +554,15 @@ function OrderDetailPanel({
             <strong>Observación:</strong> {pedido.observacion}
           </p>
         )}
+        <a
+          href={clientWhatsAppUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-4 inline-flex items-center gap-2 rounded-xl bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+        >
+          <MessageCircle className="h-4 w-4" />
+          Escribir al cliente
+        </a>
       </div>
 
       <div className="my-6 border-t border-slate-200" />
@@ -489,6 +613,44 @@ function OrderDetailPanel({
           <strong>${Number(pedido.total).toFixed(2)}</strong>
         </div>
       </div>
+
+      {order.estados.length > 0 && (
+        <>
+          <div className="my-6 border-t border-slate-200" />
+
+          <h4 className="font-bold">Historial del pedido</h4>
+
+          <div className="mt-3 space-y-3">
+            {order.estados.map((estado, index) => (
+              <div
+                key={`${estado.estado_nuevo}-${estado.fecha_creacion}-${index}`}
+                className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm"
+              >
+                <div className="flex items-center gap-2">
+                  <Clock3 className="h-4 w-4 text-slate-500" />
+                  <strong>{estado.estado_nuevo}</strong>
+                </div>
+
+                <p className="mt-1 text-xs text-slate-500">
+                  {new Date(estado.fecha_creacion).toLocaleString()}
+                </p>
+
+                {estado.estado_anterior && (
+                  <p className="mt-1 text-slate-600">
+                    Cambio: {estado.estado_anterior} → {estado.estado_nuevo}
+                  </p>
+                )}
+
+                {estado.observacion && (
+                  <p className="mt-1 text-slate-600">
+                    {estado.observacion}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       {order.factura && (
         <div className="mt-6 rounded-2xl border border-green-200 bg-green-50 p-4 text-sm text-green-700">

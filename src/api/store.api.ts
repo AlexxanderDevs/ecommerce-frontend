@@ -1,5 +1,6 @@
 import { http } from './http';
 import type { CreateStorePayload, Store } from '../types/store.types';
+import type { AdminDashboardData } from '../types/admin-dashboard.types';
 
 interface CreateStoreResponse {
   ok: boolean;
@@ -99,4 +100,14 @@ export async function markNotificationAsRead(idNotificacion: string) {
   );
 
   return data;
+}
+
+export async function getAdminDashboard(storeId?: string) {
+  const params = storeId ? { storeId } : undefined;
+
+  const { data } = await http.get('/stores/admin/dashboard', {
+    params
+  });
+
+  return data.dashboard as AdminDashboardData;
 }

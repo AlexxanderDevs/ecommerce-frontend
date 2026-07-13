@@ -18,6 +18,7 @@ import {
 } from '../../api/store.api';
 import type { Store as StoreType } from '../../types/store.types';
 import { assetUrl } from '../../utils/assets';
+import { Link } from 'react-router-dom';
 
 export function AdminDashboardPage() {
     const [stores, setStores] = useState<StoreType[]>([]);
@@ -109,6 +110,12 @@ export function AdminDashboardPage() {
                         Revisa, aprueba o rechaza las solicitudes de tiendas creadas por vendedores.
                     </p>
                 </div>
+                <Link
+                    to="/admin/dashboard"
+                    className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+                >
+                    Ver dashboard administrativo
+                </Link>
 
                 <button
                     onClick={loadAdminData}

@@ -13,6 +13,8 @@ import { ProductDetailPage } from './pages/public/ProductDetailPage';
 import { CartPage } from './pages/public/CartPage';
 import { SellerOrdersPage } from './pages/seller/SellerOrdersPage';
 import { SellerLayout } from './components/layout/SellerLayout';
+import { SellerAnalyticsPage } from './pages/seller/SellerAnalyticsPage';
+import { AdminAnalyticsPage } from './pages/admin/AdminAnalyticsPage';
 
 const router = createBrowserRouter([
   {
@@ -59,6 +61,10 @@ const router = createBrowserRouter([
                 element: <SellerDashboardPage />
               },
               {
+                path: 'dashboard',
+                element: <SellerAnalyticsPage />
+              },
+              {
                 path: 'products',
                 element: <SellerProductsPage />
               },
@@ -76,7 +82,12 @@ const router = createBrowserRouter([
           {
             path: 'admin',
             element: <AdminDashboardPage />
+          },
+          {
+            path: 'admin/dashboard',
+            element: <AdminAnalyticsPage />
           }
+          
         ]
       }
     ]

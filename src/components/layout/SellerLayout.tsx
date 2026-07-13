@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { ClipboardList, LayoutDashboard, Package, Store } from 'lucide-react';
+import { ClipboardList, LayoutDashboard, Package, Store, BarChart3 } from 'lucide-react';
 
 const sellerLinks = [
   {
@@ -7,6 +7,12 @@ const sellerLinks = [
     label: 'Mis tiendas',
     description: 'Solicitudes y tiendas aprobadas',
     icon: Store
+  },
+  {
+    to: '/seller/dashboard',
+    label: 'Resumen',
+    description: 'Ventas, pedidos y stock',
+    icon: BarChart3
   },
   {
     to: '/seller/products',
@@ -49,10 +55,9 @@ export function SellerLayout() {
                 to={link.to}
                 end={link.to === '/seller'}
                 className={({ isActive }) =>
-                  `rounded-2xl border p-4 transition ${
-                    isActive
-                      ? 'border-slate-900 bg-slate-900 text-white'
-                      : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-white'
+                  `rounded-2xl border p-4 transition ${isActive
+                    ? 'border-slate-900 bg-slate-900 text-white'
+                    : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-white'
                   }`
                 }
               >

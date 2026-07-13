@@ -1,5 +1,6 @@
 import { http } from './http';
 import type { SellerOrder, SellerOrderDetail } from '../types/order.types';
+import type { SellerDashboardData } from '../types/dashboard.types';
 
 export interface CreateOrderPayload {
   id_tienda: string;
@@ -57,4 +58,12 @@ export async function deliverSellerOrder(orderId: string, observacion?: string) 
   });
 
   return data.order as SellerOrderDetail;
+}
+
+export async function getSellerDashboardByStore(storeId: string) {
+  const { data } = await http.get(
+    `/orders/seller/stores/${storeId}/dashboard`
+  );
+
+  return data.dashboard as SellerDashboardData;
 }
