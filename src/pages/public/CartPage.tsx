@@ -158,6 +158,14 @@ export function CartPage() {
                     <p className="mt-2 text-sm text-slate-600">
                       ${item.precio_unitario.toFixed(2)} c/u
                     </p>
+                    {typeof item.stock_disponible === 'number' && (
+                      <p
+                        className={`mt-1 text-xs font-medium ${item.stock_disponible <= 0 ? 'text-red-600' : 'text-green-600'
+                          }`}
+                      >
+                        Stock disponible: {item.stock_disponible}
+                      </p>
+                    )}
                   </div>
 
                   <button
@@ -171,6 +179,7 @@ export function CartPage() {
                 <div className="mt-4 flex items-center justify-between">
                   <div className="flex items-center rounded-xl border border-slate-200">
                     <button
+                      type="button"
                       onClick={() =>
                         updateQuantity(
                           item.id_producto,
@@ -188,6 +197,11 @@ export function CartPage() {
                     </span>
 
                     <button
+                      type="button"
+                      disabled={
+                        typeof item.stock_disponible === 'number' &&
+                        item.cantidad >= item.stock_disponible
+                      }
                       onClick={() =>
                         updateQuantity(
                           item.id_producto,
@@ -195,15 +209,18 @@ export function CartPage() {
                           item.cantidad + 1
                         )
                       }
-                      className="p-2 hover:bg-slate-50"
+                      className="p-2 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       <Plus className="h-4 w-4" />
                     </button>
                   </div>
 
-                  <p className="font-bold">
-                    ${(item.precio_unitario * item.cantidad).toFixed(2)}
-                  </p>
+                  <div className="text-right">
+                    <p className="text-xs text-slate-500">Subtotal</p>
+                    <p className="font-bold">
+                      ${(item.precio_unitario * item.cantidad).toFixed(2)}
+                    </p>
+                  </div>
                 </div>
               </div>
             </article>

@@ -53,6 +53,16 @@ function loadInitialCart(): CartState {
   }
 }
 
+function clampQuantity(quantity: number, stock?: number) {
+  if (quantity <= 0) return 0;
+
+  if (typeof stock === 'number' && stock >= 0) {
+    return Math.min(quantity, stock);
+  }
+
+  return quantity;
+}
+
 export function CartProvider({ children }: CartProviderProps) {
   const [cart, setCart] = useState<CartState>(loadInitialCart);
 
@@ -64,9 +74,24 @@ export function CartProvider({ children }: CartProviderProps) {
     if (cart.store && cart.store.id_tienda !== store.id_tienda) {
       return {
         ok: false,
-        message: 'Tu carrito tiene productos de otra tienda. Vacía el carrito antes de comprar en otra tienda.'
+        message:
+          'Tu carrito tiene productos de otra tienda. Vacía el carrito antes de comprar en otra tienda.'
       };
     }
+
+    const stockDisponible = item.stock_disponible;
+
+    if (typeof stockDisponible === 'number' && stockDisponible <= 0) {
+      return {
+        ok: false,
+        message: 'Este producto no tiene stock disponible.'
+      };
+    }
+
+    let result: AddItemResult = {
+      ok: true,
+      message: 'Producto agregado al carrito.'
+    };
 
     setCart((currentCart) => {
       const existingItem = currentCart.items.find((cartItem) => {
@@ -77,6 +102,21 @@ export function CartProvider({ children }: CartProviderProps) {
       });
 
       if (existingItem) {
+        const newQuantity = existingItem.cantidad + item.cantidad;
+        const limitedQuantity = clampQuantity(
+          newQuantity,
+          existingItem.stock_disponible ?? item.stock_disponible
+        );
+
+        if (limitedQuantity < newQuantity) {
+          result = {
+            ok: false,
+            message: 'No puedes agregar más unidades que el stock disponible.'
+          };
+
+          return currentCart;
+        }
+
         return {
           store,
           items: currentCart.items.map((cartItem) => {
@@ -90,22 +130,47 @@ export function CartProvider({ children }: CartProviderProps) {
 
             return {
               ...cartItem,
-              cantidad: cartItem.cantidad + item.cantidad
+              cantidad: limitedQuantity,
+              stock_disponible:
+                item.stock_disponible ?? cartItem.stock_disponible
             };
           })
         };
       }
 
+      const limitedQuantity = clampQuantity(item.cantidad, item.stock_disponible);
+
+      if (limitedQuantity <= 0) {
+        result = {
+          ok: false,
+          message: 'Este producto no tiene stock disponible.'
+        };
+
+        return currentCart;
+      }
+
+      if (limitedQuantity < item.cantidad) {
+        result = {
+          ok: false,
+          message: 'No puedes agregar más unidades que el stock disponible.'
+        };
+
+        return currentCart;
+      }
+
       return {
         store,
-        items: [...currentCart.items, item]
+        items: [
+          ...currentCart.items,
+          {
+            ...item,
+            cantidad: limitedQuantity
+          }
+        ]
       };
     });
 
-    return {
-      ok: true,
-      message: 'Producto agregado al carrito.'
-    };
+    return result;
   }
 
   function removeItem(idProducto: string, idVariante?: string | null) {
@@ -145,9 +210,14 @@ export function CartProvider({ children }: CartProviderProps) {
           return cartItem;
         }
 
+        const limitedQuantity = clampQuantity(
+          quantity,
+          cartItem.stock_disponible
+        );
+
         return {
           ...cartItem,
-          cantidad: quantity
+          cantidad: limitedQuantity
         };
       })
     }));

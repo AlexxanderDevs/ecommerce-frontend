@@ -134,6 +134,7 @@ export function ProductDetailPage() {
         nombre_tienda: producto.nombre_tienda,
         slug_tienda: producto.slug_tienda,
         whatsapp: producto.whatsapp
+      
       },
       {
         id_producto: producto.id_producto,
@@ -144,7 +145,8 @@ export function ProductDetailPage() {
         color: selectedVariant?.color ?? null,
         precio_unitario: finalPrice,
         cantidad: quantity,
-        requiere_variantes: producto.requiere_variantes
+        requiere_variantes: producto.requiere_variantes,
+        stock_disponible: stockAvailable
       }
     );
 

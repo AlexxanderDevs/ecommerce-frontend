@@ -19,6 +19,7 @@ export interface CartItem {
   cantidad: number;
 
   requiere_variantes: boolean;
+  stock_disponible?: number;
 }
 
 export interface CartState {
