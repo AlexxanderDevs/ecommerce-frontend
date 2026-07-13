@@ -47,3 +47,39 @@ export interface AdminDashboardStoreOption {
     logo_url?: string | null;
     estado: string;
 }
+
+export interface AdminStore {
+  id_tienda: string;
+  id_usuario_duenio: string;
+  nombre_duenio: string;
+  correo_duenio: string;
+
+  nombre: string;
+  nombre_comercial?: string | null;
+  slug: string;
+  descripcion?: string | null;
+
+  logo_url?: string | null;
+  portada_url?: string | null;
+  etiqueta_url?: string | null;
+
+  color_principal: string;
+  whatsapp: string;
+  correo_contacto?: string | null;
+  direccion?: string | null;
+
+  estado:
+    | 'PENDIENTE_REVISION'
+    | 'ACTIVA'
+    | 'INACTIVA'
+    | 'SUSPENDIDA'
+    | 'RECHAZADA'
+    | 'ELIMINADA';
+
+  fecha_creacion: string;
+  fecha_actualizacion?: string;
+
+  cantidad_productos: number;
+  cantidad_pedidos: number;
+  ventas_totales: string | number;
+}

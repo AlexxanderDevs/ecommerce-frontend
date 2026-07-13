@@ -116,6 +116,12 @@ export function AdminDashboardPage() {
                 >
                     Ver dashboard administrativo
                 </Link>
+                <Link
+                    to="/admin/stores"
+                    className="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50"
+                >
+                    Gestionar tiendas
+                </Link>
 
                 <button
                     onClick={loadAdminData}

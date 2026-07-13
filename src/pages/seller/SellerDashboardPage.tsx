@@ -4,6 +4,7 @@ import {
     ImagePlus,
     Loader2,
     Plus,
+    Pencil,
     RefreshCcw,
     Store
 } from 'lucide-react';
@@ -18,6 +19,7 @@ import { assetUrl } from '../../utils/assets';
 import { toast } from 'sonner';
 import { getErrorMessage } from '../../utils/getErrorMessage';
 import { CopyStoreLinkButton } from '../../components/seller/CopyStoreLinkButton';
+import { StoreEditDialog } from '../../components/seller/StoreEditDialog';
 
 type StoreStatus = NonNullable<StoreType['estado']>;
 
@@ -36,6 +38,7 @@ export function SellerDashboardPage() {
     const [submitting, setSubmitting] = useState(false);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [editingStore, setEditingStore] = useState<StoreType | null>(null);
 
     const [nombre, setNombre] = useState('');
     const [descripcion, setDescripcion] = useState('');
@@ -305,7 +308,11 @@ export function SellerDashboardPage() {
                     ) : (
                         <div className="grid gap-4">
                             {stores.map((store) => (
-                                <StoreCard key={store.id_tienda} store={store} />
+                                <StoreCard
+                                    key={store.id_tienda}
+                                    store={store}
+                                    onEdit={() => setEditingStore(store)}
+                                />
                             ))}
                         </div>
 
@@ -314,6 +321,12 @@ export function SellerDashboardPage() {
                 </div>
 
             </div>
+            <StoreEditDialog
+                open={Boolean(editingStore)}
+                store={editingStore}
+                onClose={() => setEditingStore(null)}
+                onUpdated={loadStores}
+            />
         </section>
     );
 }
@@ -344,11 +357,15 @@ function ImageInput({ label, file, onChange }: ImageInputProps) {
 
 interface StoreCardProps {
     store: StoreType;
+    onEdit: () => void;
 }
 
-function StoreCard({ store }: StoreCardProps) {
+function StoreCard({ store, onEdit }: StoreCardProps) {
     return (
-        <article className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <article
+            className="overflow-hidden rounded-3xl border bg-white shadow-sm"
+            style={{ borderColor: store.color_principal || '#e2e8f0' }}
+        >
             {store.portada_url ? (
                 <img
                     src={assetUrl(store.portada_url)}
@@ -377,7 +394,12 @@ function StoreCard({ store }: StoreCardProps) {
                     </div>
 
                     <div className="min-w-0 flex-1">
-                        <h3 className="truncate text-lg font-bold">{store.nombre}</h3>
+                        <h3
+                            className="truncate text-lg font-bold"
+                            style={{ color: store.color_principal || '#111827' }}
+                        >
+                            {store.nombre}
+                        </h3>
                         <p className="text-sm text-slate-500">/{store.slug}</p>
 
                         <span
@@ -426,13 +448,23 @@ function StoreCard({ store }: StoreCardProps) {
                         </div>
 
                         <div className="mt-4 flex flex-wrap gap-3">
+                            <button
+                                type="button"
+                                onClick={onEdit}
+                                className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50"
+                            >
+                                <Pencil className="h-4 w-4" />
+                                Editar tienda
+                            </button>
+
                             <CopyStoreLinkButton slug={store.slug} />
 
                             <a
                                 href={`/stores/${store.slug}`}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+                                className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium text-white"
+                                style={{ backgroundColor: store.color_principal || '#111827' }}
                             >
                                 Ver tienda
                             </a>
@@ -447,6 +479,18 @@ function StoreCard({ store }: StoreCardProps) {
                 {store.estado === 'RECHAZADA' && (
                     <div className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">
                         Tu tienda fue rechazada. Revisa la información y solicita una nueva.
+                    </div>
+                )}
+                {store.estado !== 'ACTIVA' && store.estado !== 'SUSPENDIDA' && (
+                    <div className="mt-4">
+                        <button
+                            type="button"
+                            onClick={onEdit}
+                            className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50"
+                        >
+                            <Pencil className="h-4 w-4" />
+                            Editar información
+                        </button>
                     </div>
                 )}
             </div>

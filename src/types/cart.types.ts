@@ -2,7 +2,8 @@ export interface CartStore {
   id_tienda: string;
   nombre_tienda: string;
   slug_tienda: string;
-  whatsapp?: string;
+  whatsapp?: string | null;
+  color_principal?: string | null;
 }
 
 export interface CartItem {

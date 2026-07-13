@@ -16,6 +16,7 @@ import { SellerLayout } from './components/layout/SellerLayout';
 import { SellerAnalyticsPage } from './pages/seller/SellerAnalyticsPage';
 import { AdminAnalyticsPage } from './pages/admin/AdminAnalyticsPage';
 import { Navigate } from 'react-router-dom';
+import { AdminStoresPage } from './pages/admin/AdminStoresPage';
 
 const router = createBrowserRouter([
   {
@@ -87,7 +88,10 @@ const router = createBrowserRouter([
           {
             path: 'admin/dashboard',
             element: <AdminAnalyticsPage />
-          }
+          },
+
+          { path: 'admin/stores', 
+            element: <AdminStoresPage /> },
 
         ]
       }

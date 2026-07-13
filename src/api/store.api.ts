@@ -1,6 +1,6 @@
 import { http } from './http';
 import type { CreateStorePayload, Store } from '../types/store.types';
-import type { AdminDashboardData } from '../types/admin-dashboard.types';
+import type { AdminDashboardData, AdminStore } from '../types/admin-dashboard.types';
 
 interface CreateStoreResponse {
   ok: boolean;
@@ -42,6 +42,18 @@ export interface AdminNotification {
 interface AdminNotificationsResponse {
   ok: boolean;
   notifications: AdminNotification[];
+}
+
+export interface UpdateSellerStorePayload {
+  nombre: string;
+  descripcion?: string | null;
+  logo_url?: string | null;
+  portada_url?: string | null;
+  etiqueta_url?: string | null;
+  color_principal: string;
+  whatsapp: string;
+  correo_contacto?: string | null;
+  direccion?: string | null;
 }
 
 export async function createStore(payload: CreateStorePayload) {
@@ -110,4 +122,42 @@ export async function getAdminDashboard(storeId?: string) {
   });
 
   return data.dashboard as AdminDashboardData;
+}
+
+export async function getAdminStores() {
+  const { data } = await http.get('/stores/admin/all');
+
+  return data.stores as AdminStore[];
+}
+
+export async function suspendAdminStore(
+  storeId: string,
+  observacion?: string
+) {
+  const { data } = await http.patch(`/stores/admin/${storeId}/suspend`, {
+    observacion
+  });
+
+  return data.store as AdminStore;
+}
+
+export async function reactivateAdminStore(
+  storeId: string,
+  observacion?: string
+) {
+  const { data } = await http.patch(`/stores/admin/${storeId}/reactivate`, {
+    observacion
+  });
+
+  return data.store as AdminStore;
+}
+
+// ACTUALIZAR TIENDA DEL VENDEDOR
+export async function updateSellerStore(
+  storeId: string,
+  payload: UpdateSellerStorePayload
+) {
+  const { data } = await http.patch(`/stores/seller/${storeId}`, payload);
+
+  return data.store;
 }

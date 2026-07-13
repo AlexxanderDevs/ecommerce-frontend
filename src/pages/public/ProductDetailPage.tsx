@@ -83,6 +83,7 @@ export function ProductDetailPage() {
     : producto?.stock_disponible ?? producto?.stock_general ?? 0;
 
   const isOutOfStock = stockAvailable <= 0;
+  const storeColor = producto?.color_principal || '#111827';
 
   function handleQuantityChange(value: number) {
     if (Number.isNaN(value) || value < 1) {
@@ -133,8 +134,8 @@ export function ProductDetailPage() {
         id_tienda: producto.id_tienda,
         nombre_tienda: producto.nombre_tienda,
         slug_tienda: producto.slug_tienda,
-        whatsapp: producto.whatsapp
-      
+        whatsapp: producto.whatsapp,
+        color_principal: producto.color_principal
       },
       {
         id_producto: producto.id_producto,
@@ -189,10 +190,10 @@ export function ProductDetailPage() {
     <section className="mx-auto max-w-7xl px-4 py-10">
       <Link
         to={`/stores/${producto.slug_tienda}`}
-        className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900"
+        className="font-bold hover:underline"
+        style={{ color: storeColor }}
       >
-        <ArrowLeft className="h-4 w-4" />
-        Volver a la tienda
+        {producto.nombre_tienda}
       </Link>
 
       <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
@@ -216,11 +217,17 @@ export function ProductDetailPage() {
                   key={image.id_imagen}
                   type="button"
                   onClick={() => setSelectedImage(image.url_imagen)}
-                  className={`h-24 overflow-hidden rounded-2xl border bg-white transition ${
+                  className="h-24 overflow-hidden rounded-2xl border bg-white transition"
+                  style={
                     selectedImage === image.url_imagen
-                      ? 'border-slate-900 ring-2 ring-slate-900'
-                      : 'border-slate-200 hover:border-slate-400'
-                  }`}
+                      ? {
+                        borderColor: storeColor,
+                        boxShadow: `0 0 0 2px ${storeColor}`
+                      }
+                      : {
+                        borderColor: '#e2e8f0'
+                      }
+                  }
                 >
                   <img
                     src={assetUrl(image.url_imagen)}
@@ -263,18 +270,24 @@ export function ProductDetailPage() {
               {producto.categoria || 'Sin categoría'}
             </p>
 
-            <h1 className="mt-2 text-4xl font-bold">{producto.nombre}</h1>
-
+            <h1
+              className="mt-2 text-4xl font-bold"
+              style={{ color: storeColor }}
+            >
+              {producto.nombre}
+            </h1>
             {producto.destacado && (
               <span className="mt-3 inline-flex rounded-full bg-yellow-50 px-3 py-1 text-sm font-medium text-yellow-700">
                 Producto destacado
               </span>
             )}
 
-            <p className="mt-6 text-3xl font-bold">
+            <p
+              className="mt-6 text-3xl font-bold"
+              style={{ color: storeColor }}
+            >
               ${finalPrice.toFixed(2)}
             </p>
-
             {selectedVariant &&
               Number(selectedVariant.precio_adicional || 0) > 0 && (
                 <p className="mt-1 text-sm text-slate-500">
@@ -284,11 +297,10 @@ export function ProductDetailPage() {
               )}
 
             <div
-              className={`mt-4 rounded-xl p-4 text-sm font-medium ${
-                isOutOfStock
-                  ? 'bg-red-50 text-red-700'
-                  : 'bg-green-50 text-green-700'
-              }`}
+              className={`mt-4 rounded-xl p-4 text-sm font-medium ${isOutOfStock
+                ? 'bg-red-50 text-red-700'
+                : 'bg-green-50 text-green-700'
+                }`}
             >
               {producto.requiere_variantes && !selectedVariant
                 ? 'Selecciona una variante para ver el stock.'
@@ -333,11 +345,20 @@ export function ProductDetailPage() {
                           setError('');
                         }}
                         disabled={variantOutOfStock}
-                        className={`rounded-2xl border p-4 text-left text-sm transition disabled:cursor-not-allowed disabled:opacity-50 ${
+                        className="rounded-2xl border p-4 text-left text-sm transition disabled:cursor-not-allowed disabled:opacity-50"
+                        style={
                           isSelected
-                            ? 'border-slate-900 bg-slate-900 text-white'
-                            : 'border-slate-200 bg-white hover:bg-slate-50'
-                        }`}
+                            ? {
+                              borderColor: storeColor,
+                              backgroundColor: storeColor,
+                              color: '#ffffff'
+                            }
+                            : {
+                              borderColor: '#e2e8f0',
+                              backgroundColor: '#ffffff',
+                              color: '#0f172a'
+                            }
+                        }
                       >
                         <p className="font-semibold">
                           {variant.talla
@@ -379,7 +400,8 @@ export function ProductDetailPage() {
                 type="button"
                 onClick={decreaseQuantity}
                 disabled={quantity <= 1 || isOutOfStock}
-                className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-300 font-bold disabled:opacity-50"
+                className="flex h-11 w-11 items-center justify-center rounded-xl border font-bold disabled:opacity-50"
+                style={{ borderColor: storeColor, color: storeColor }}
               >
                 -
               </button>
@@ -398,7 +420,8 @@ export function ProductDetailPage() {
                 type="button"
                 onClick={increaseQuantity}
                 disabled={quantity >= stockAvailable || isOutOfStock}
-                className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-300 font-bold disabled:opacity-50"
+                className="flex h-11 w-11 items-center justify-center rounded-xl border font-bold disabled:opacity-50"
+                style={{ borderColor: storeColor, color: storeColor }}
               >
                 +
               </button>
@@ -413,7 +436,8 @@ export function ProductDetailPage() {
               (producto.requiere_variantes && !selectedVariant) ||
               (producto.requiere_variantes && variantes.length === 0)
             }
-            className="mt-8 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-4 font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-8 flex w-full items-center justify-center gap-2 rounded-xl px-5 py-4 font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+            style={{ backgroundColor: storeColor }}
           >
             <ShoppingBag className="h-5 w-5" />
             {isOutOfStock ? 'Producto agotado' : 'Agregar al carrito'}

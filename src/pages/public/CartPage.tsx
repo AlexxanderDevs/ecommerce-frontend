@@ -27,6 +27,7 @@ export function CartPage() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const storeColor = cart.store?.color_principal || '#111827';
 
   async function handleCreateOrder(event: FormEvent) {
     event.preventDefault();
@@ -99,10 +100,11 @@ export function CartPage() {
         </p>
 
         <Link
-          to="/stores"
-          className="mt-8 inline-flex rounded-xl bg-slate-900 px-5 py-3 font-medium text-white hover:bg-slate-800"
+          to="/"
+          className="mt-8 inline-flex rounded-xl px-5 py-3 font-medium text-white"
+          style={{ backgroundColor: storeColor }}
         >
-          Ver tiendas
+          Volver al inicio
         </Link>
       </section>
     );
@@ -111,9 +113,15 @@ export function CartPage() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Carrito de compras</h1>
-        <p className="mt-2 text-slate-600">
-          Pedido para la tienda: <strong>{cart.store?.nombre_tienda}</strong>
+        <h1
+          className="text-3xl font-bold"
+          style={{ color: storeColor }}
+        >
+          Carrito de compras
+        </h1>        <p className="mt-2 text-slate-600">
+          Pedido para la tienda: <strong style={{ color: storeColor }}>
+            {cart.store?.nombre_tienda}
+          </strong>
         </p>
       </div>
 
@@ -128,7 +136,8 @@ export function CartPage() {
           {cart.items.map((item) => (
             <article
               key={`${item.id_producto}-${item.id_variante ?? 'simple'}`}
-              className="flex gap-4 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm"
+              className="flex gap-4 rounded-3xl border bg-white p-4 shadow-sm"
+              style={{ borderColor: '#e2e8f0' }}
             >
               <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-slate-100">
                 {item.imagen ? (
@@ -145,8 +154,12 @@ export function CartPage() {
               <div className="flex-1">
                 <div className="flex justify-between gap-4">
                   <div>
-                    <h2 className="font-bold">{item.nombre}</h2>
-
+                    <h2
+                      className="font-bold"
+                      style={{ color: storeColor }}
+                    >
+                      {item.nombre}
+                    </h2>
                     {(item.talla || item.color) && (
                       <p className="mt-1 text-sm text-slate-500">
                         {item.talla ? `Talla: ${item.talla}` : ''}
@@ -287,7 +300,10 @@ export function CartPage() {
           </div>
 
           <div className="my-6 border-t border-slate-200 pt-6">
-            <div className="flex justify-between text-lg font-bold">
+            <div
+              className="flex justify-between text-lg font-bold"
+              style={{ color: storeColor }}
+            >
               <span>Total</span>
               <span>${total.toFixed(2)}</span>
             </div>
@@ -295,9 +311,11 @@ export function CartPage() {
 
           <button
             disabled={loading}
-            className="w-full rounded-xl bg-green-600 px-5 py-4 font-medium text-white hover:bg-green-700 disabled:opacity-60"
+            className="w-full rounded-xl px-5 py-4 font-medium text-white disabled:opacity-60"
+            style={{ backgroundColor: storeColor }}
           >
             {loading ? 'Creando pedido...' : 'Hacer pedido por WhatsApp'}
+            
           </button>
 
           <p className="mt-4 text-center text-xs text-slate-500">

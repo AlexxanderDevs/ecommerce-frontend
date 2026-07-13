@@ -25,6 +25,16 @@ export interface Product {
   estado: string;
   imagen_principal?: string | null;
   fecha_creacion: string;
+
+  nombre_tienda?: string;
+  slug_tienda?: string;
+  logo_url?: string | null;
+  portada_url?: string | null;
+  etiqueta_url?: string | null;
+  color_principal?: string | null;
+  whatsapp?: string | null;
+  correo_contacto?: string | null;
+  direccion?: string | null;
 }
 
 export interface CreateCategoryPayload {
@@ -58,6 +68,7 @@ export interface CreateVariantPayload {
 
 export interface ProductVariant {
   id_variante: string;
+  id_producto?: string;
   sku?: string | null;
   talla?: string | null;
   color?: string | null;
@@ -65,27 +76,8 @@ export interface ProductVariant {
   stock: number;
   precio_adicional: string | number;
   estado: string;
-}
-
-export interface ProductImage {
-  id_imagen: string;
-  url_imagen: string;
-  es_principal: boolean;
-  orden: number;
-}
-
-export interface PublicProductDetail {
-  producto: Product & {
-    nombre_tienda: string;
-    slug_tienda: string;
-    logo_url?: string | null;
-    portada_url?: string | null;
-    etiqueta_url?: string | null;
-    color_principal?: string;
-    whatsapp?: string;
-  };
-  imagenes: ProductImage[];
-  variantes: ProductVariant[];
+  fecha_creacion?: string;
+  fecha_actualizacion?: string;
 }
 
 export interface ProductImage {
@@ -97,4 +89,18 @@ export interface ProductImage {
   estado?: string;
   fecha_creacion?: string;
   fecha_actualizacion?: string;
+}
+
+export interface PublicProductDetail {
+  producto: Product & {
+    nombre_tienda: string;
+    slug_tienda: string;
+    logo_url?: string | null;
+    portada_url?: string | null;
+    etiqueta_url?: string | null;
+    color_principal?: string | null;
+    whatsapp?: string | null;
+  };
+  imagenes: ProductImage[];
+  variantes: ProductVariant[];
 }
