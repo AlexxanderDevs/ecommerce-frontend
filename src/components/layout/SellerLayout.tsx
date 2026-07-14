@@ -15,6 +15,12 @@ const sellerLinks = [
     icon: BarChart3
   },
   {
+    to: '/seller/reports',
+    label: 'Reportes',
+    description: 'Ventas y productos vendidos',
+    icon: BarChart3
+  },
+  {
     to: '/seller/products',
     label: 'Productos',
     description: 'Categorías, productos y variantes',

@@ -18,6 +18,8 @@ import { AdminAnalyticsPage } from './pages/admin/AdminAnalyticsPage';
 import { Navigate } from 'react-router-dom';
 import { AdminStoresPage } from './pages/admin/AdminStoresPage';
 import { AdminUsersPage } from './pages/admin/AdminUsersPage';
+import { AdminReportsPage } from './pages/admin/AdminReportsPage';
+import { SellerReportsPage } from './pages/seller/SellerReportsPage';
 
 const router = createBrowserRouter([
   {
@@ -74,6 +76,10 @@ const router = createBrowserRouter([
               {
                 path: 'orders',
                 element: <SellerOrdersPage />
+              },
+              { path: 'reports', 
+                element: <SellerReportsPage /> 
+
               }
             ]
           }
@@ -92,11 +98,14 @@ const router = createBrowserRouter([
           },
 
           { path: 'admin/stores', 
-            element: <AdminStoresPage /> },
-
+            element: <AdminStoresPage /> 
+          },
           { path: 'admin/users', 
-            element: <AdminUsersPage /> },  
-
+            element: <AdminUsersPage /> 
+          },  
+          { path: 'admin/reports', 
+            element: <AdminReportsPage /> 
+          },
         ]
       }
     ]

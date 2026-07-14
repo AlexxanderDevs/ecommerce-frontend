@@ -122,11 +122,17 @@ export function AdminDashboardPage() {
                 >
                     Gestionar tiendas
                 </Link>
-                 <Link
+                <Link
                     to="/admin/users"
                     className="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50"
                 >
                     Gestionar usuarios
+                </Link>
+                <Link
+                    to="/admin/reports"
+                    className="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50"
+                >
+                    Ver reportes
                 </Link>
 
                 <button
@@ -255,7 +261,7 @@ function AdminStoreCard({
     return (
         <article className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
             <div className="grid gap-0 lg:grid-cols-[280px_1fr]">
-               
+
                 <div className="relative h-56 bg-slate-100 lg:h-full">
                     {store.portada_url ? (
                         <img
