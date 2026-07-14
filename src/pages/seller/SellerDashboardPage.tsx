@@ -193,7 +193,7 @@ export function SellerDashboardPage() {
                                 value={nombre}
                                 onChange={(e) => setNombre(e.target.value)}
                                 className="mt-1 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-slate-900"
-                                placeholder="Moda Kevin"
+                                placeholder="Ingrese nombre de su tienda"
                                 required
                             />
                         </div>
