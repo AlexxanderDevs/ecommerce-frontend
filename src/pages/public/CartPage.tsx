@@ -11,6 +11,23 @@ import { getErrorMessage } from '../../utils/getErrorMessage';
 
 export function CartPage() {
   const { user } = useAuth();
+  function userHasRole(role: string) {
+    const roles = user?.roles ?? [];
+
+    return roles.some((item: any) => {
+      if (typeof item === 'string') {
+        return item === role;
+      }
+
+      return item.codigo === role;
+    });
+  }
+  const isAdmin = userHasRole('ADMIN');
+  const isSeller = userHasRole('VENDEDOR');
+  const isCustomer = userHasRole('CLIENTE');
+
+  const cannotBuyWithCurrentAccount =
+    user && (isAdmin || isSeller) && !isCustomer;
   const {
     cart,
     total,
@@ -31,6 +48,14 @@ export function CartPage() {
 
   async function handleCreateOrder(event: FormEvent) {
     event.preventDefault();
+    if (cannotBuyWithCurrentAccount) {
+      const message =
+        'Esta cuenta no puede realizar compras. Usa una cuenta de cliente o compra como invitado.';
+
+      setError(message);
+      toast.error(message);
+      return;
+    }
 
     if (!cart.store) {
       const message = 'No hay tienda asociada al carrito.';
@@ -239,7 +264,11 @@ export function CartPage() {
             </article>
           ))}
         </div>
-
+        {cannotBuyWithCurrentAccount && (
+          <div className="mb-6 rounded-2xl border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-700">
+            Esta cuenta pertenece a un administrador o vendedor. Para comprar, usa una cuenta de cliente o realiza el pedido como invitado.
+          </div>
+        )}
         <form
           onSubmit={handleCreateOrder}
           className="h-fit rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
@@ -310,12 +339,12 @@ export function CartPage() {
           </div>
 
           <button
-            disabled={loading}
+            disabled={loading || Boolean(cannotBuyWithCurrentAccount)}
             className="w-full rounded-xl px-5 py-4 font-medium text-white disabled:opacity-60"
             style={{ backgroundColor: storeColor }}
           >
             {loading ? 'Creando pedido...' : 'Hacer pedido por WhatsApp'}
-            
+
           </button>
 
           <p className="mt-4 text-center text-xs text-slate-500">
