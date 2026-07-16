@@ -28,8 +28,17 @@ export function Navbar() {
           >
             Inicio
           </NavLink>
+        
+        { hasRole('CLIENTE') && (
+            <Link
+            to="/account/orders"
+            className="text-sm font-medium text-slate-700 hover:text-slate-900"
+          >
+            Mis pedidos
+          </Link>
+        )}
 
-         
+
           {hasRole('VENDEDOR') && (
             <>
               <NavLink
@@ -51,7 +60,7 @@ export function Navbar() {
               >
                 Pedidos
               </NavLink>
-      
+
 
             </>
           )}
@@ -62,12 +71,12 @@ export function Navbar() {
               className="text-sm font-medium text-slate-600 hover:text-slate-900"
             >
               Admin
-        
+
 
             </NavLink>
-        
-            
-            
+
+
+
           )}
         </div>
 

@@ -20,6 +20,7 @@ import { AdminStoresPage } from './pages/admin/AdminStoresPage';
 import { AdminUsersPage } from './pages/admin/AdminUsersPage';
 import { AdminReportsPage } from './pages/admin/AdminReportsPage';
 import { SellerReportsPage } from './pages/seller/SellerReportsPage';
+import { CustomerOrdersPage } from './pages/customer/CustomerOrdersPage';
 
 const router = createBrowserRouter([
   {
@@ -32,7 +33,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'stores',
-        element: <Navigate to="/" replace />  
+        element: <Navigate to="/" replace />
       },
       {
         path: 'stores/:slug',
@@ -54,6 +55,15 @@ const router = createBrowserRouter([
         path: 'register',
         element: <RegisterPage />
       },
+      {
+        element: <ProtectedRoute roles={['CLIENTE']} />,
+        children: [
+          { path: 'account/orders', 
+            element: <CustomerOrdersPage /> 
+          }
+        ]
+      },
+
       {
         element: <ProtectedRoute roles={['VENDEDOR']} />,
         children: [
@@ -77,8 +87,9 @@ const router = createBrowserRouter([
                 path: 'orders',
                 element: <SellerOrdersPage />
               },
-              { path: 'reports', 
-                element: <SellerReportsPage /> 
+              {
+                path: 'reports',
+                element: <SellerReportsPage />
 
               }
             ]
@@ -97,14 +108,17 @@ const router = createBrowserRouter([
             element: <AdminAnalyticsPage />
           },
 
-          { path: 'admin/stores', 
-            element: <AdminStoresPage /> 
+          {
+            path: 'admin/stores',
+            element: <AdminStoresPage />
           },
-          { path: 'admin/users', 
-            element: <AdminUsersPage /> 
-          },  
-          { path: 'admin/reports', 
-            element: <AdminReportsPage /> 
+          {
+            path: 'admin/users',
+            element: <AdminUsersPage />
+          },
+          {
+            path: 'admin/reports',
+            element: <AdminReportsPage />
           },
         ]
       }
