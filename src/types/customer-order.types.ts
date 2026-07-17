@@ -20,6 +20,7 @@ export interface CustomerOrderInvoice {
 
 export interface CustomerOrder {
   id_pedido: string;
+  codigo_seguimiento?: string | null;
   id_tienda: string;
   nombre_tienda: string;
   slug_tienda: string;

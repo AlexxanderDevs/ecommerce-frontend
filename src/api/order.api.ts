@@ -67,3 +67,4 @@ export async function getSellerDashboardByStore(storeId: string) {
 
   return data.dashboard as SellerDashboardData;
 }
+

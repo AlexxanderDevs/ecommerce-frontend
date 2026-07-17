@@ -45,12 +45,12 @@ const statusFilters: Array<{
   value: 'TODOS' | CustomerOrderStatus;
   label: string;
 }> = [
-  { value: 'TODOS', label: 'Todos' },
-  { value: 'PENDIENTE', label: 'Pendientes' },
-  { value: 'CONFIRMADO', label: 'Confirmados' },
-  { value: 'ENTREGADO', label: 'Entregados' },
-  { value: 'CANCELADO', label: 'Cancelados' }
-];
+    { value: 'TODOS', label: 'Todos' },
+    { value: 'PENDIENTE', label: 'Pendientes' },
+    { value: 'CONFIRMADO', label: 'Confirmados' },
+    { value: 'ENTREGADO', label: 'Entregados' },
+    { value: 'CANCELADO', label: 'Cancelados' }
+  ];
 
 function money(value: string | number) {
   return `$${Number(value || 0).toFixed(2)}`;
@@ -193,11 +193,10 @@ export function CustomerOrdersPage() {
               key={filter.value}
               type="button"
               onClick={() => setSelectedStatus(filter.value)}
-              className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
-                selectedStatus === filter.value
-                  ? 'border-slate-900 bg-slate-900 text-white'
-                  : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
-              }`}
+              className={`rounded-full border px-4 py-2 text-sm font-medium transition ${selectedStatus === filter.value
+                ? 'border-slate-900 bg-slate-900 text-white'
+                : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+                }`}
             >
               {filter.label}
             </button>
@@ -296,9 +295,8 @@ function CustomerOrderCard({
               </h2>
 
               <span
-                className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium ${
-                  statusStyles[order.estado]
-                }`}
+                className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium ${statusStyles[order.estado]
+                  }`}
               >
                 <StatusIcon className="h-3.5 w-3.5" />
                 {order.estado}
@@ -308,6 +306,11 @@ function CustomerOrderCard({
             <p className="mt-1 text-sm text-slate-500">
               Pedido realizado el {formatDate(order.fecha_creacion)}
             </p>
+            {order.codigo_seguimiento && (
+              <p className="mt-2 inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                Código: {order.codigo_seguimiento}
+              </p>
+            )}
 
             <div className="mt-3 flex flex-wrap gap-3 text-sm text-slate-600">
               <span>{order.cantidad_items} producto(s)</span>
@@ -370,6 +373,11 @@ function OrderDetailModal({ data, onClose }: OrderDetailModalProps) {
             <p className="text-sm text-slate-500">
               {pedido.nombre_tienda} · {formatDate(pedido.fecha_creacion)}
             </p>
+            {pedido.codigo_seguimiento && (
+              <p className="mt-1 text-xs font-semibold text-slate-600">
+                Código de seguimiento: {pedido.codigo_seguimiento}
+              </p>
+            )}
           </div>
 
           <button
@@ -392,9 +400,8 @@ function OrderDetailModal({ data, onClose }: OrderDetailModalProps) {
                   </div>
 
                   <span
-                    className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium ${
-                      statusStyles[pedido.estado]
-                    }`}
+                    className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium ${statusStyles[pedido.estado]
+                      }`}
                   >
                     <StatusIcon className="h-4 w-4" />
                     {pedido.estado}
@@ -518,7 +525,14 @@ function OrderDetailModal({ data, onClose }: OrderDetailModalProps) {
                   </div>
                 </div>
               </div>
-
+              {pedido.codigo_seguimiento && (
+                <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm">
+                  <p className="font-semibold text-slate-700">Código de seguimiento</p>
+                  <p className="mt-2 break-all font-bold text-slate-900">
+                    {pedido.codigo_seguimiento}
+                  </p>
+                </div>
+              )}
               <div className="mt-6 rounded-2xl bg-slate-50 p-4 text-sm">
                 <p className="font-semibold">Datos de la tienda</p>
 

@@ -21,6 +21,7 @@ import { AdminUsersPage } from './pages/admin/AdminUsersPage';
 import { AdminReportsPage } from './pages/admin/AdminReportsPage';
 import { SellerReportsPage } from './pages/seller/SellerReportsPage';
 import { CustomerOrdersPage } from './pages/customer/CustomerOrdersPage';
+import { TrackOrderPage } from './pages/public/TrackOrderPage';
 
 const router = createBrowserRouter([
   {
@@ -54,6 +55,9 @@ const router = createBrowserRouter([
       {
         path: 'register',
         element: <RegisterPage />
+      },
+      { path: 'track-order', 
+        element: <TrackOrderPage /> 
       },
       {
         element: <ProtectedRoute roles={['CLIENTE']} />,

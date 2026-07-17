@@ -28,15 +28,21 @@ export function Navbar() {
           >
             Inicio
           </NavLink>
-        
-        { hasRole('CLIENTE') && (
-            <Link
-            to="/account/orders"
+          <Link
+            to="/track-order"
             className="text-sm font-medium text-slate-700 hover:text-slate-900"
           >
-            Mis pedidos
+            Consultar pedido
           </Link>
-        )}
+
+          {hasRole('CLIENTE') && (
+            <Link
+              to="/account/orders"
+              className="text-sm font-medium text-slate-700 hover:text-slate-900"
+            >
+              Mis pedidos
+            </Link>
+          )}
 
 
           {hasRole('VENDEDOR') && (
